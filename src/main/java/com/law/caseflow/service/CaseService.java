@@ -11,6 +11,9 @@ import com.law.caseflow.service.mapper.CaseMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
 public class CaseService {
 
@@ -30,11 +33,22 @@ public class CaseService {
         return CaseMapper.toResponse(saved);
     }
 
+    public List<CaseResponse> getAllCases() {
+        return findAllCases();
+    }
+
     public CaseFile getEntityByCaseNumber(String caseNumber) {
         CaseFile entity = caseRepository.findByCaseNumber(caseNumber);
         if (entity == null) {
             throw new NotFoundException("Case not found: " + caseNumber);
         }
         return entity;
+    }
+
+    public List<CaseResponse> findAllCases() {
+        return caseRepository.findAll()
+                .stream()
+                .map(CaseMapper::toResponse)
+                .toList();
     }
 }

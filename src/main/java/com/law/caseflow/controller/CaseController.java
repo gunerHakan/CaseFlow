@@ -10,6 +10,7 @@ import com.law.caseflow.service.mapper.CaseMapper;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,6 +29,11 @@ public class CaseController {
     public CaseResponse create(@Valid @RequestBody CaseCreateRequest request,
                                @RequestParam UUID clientId) {
         return caseService.create(request, clientService.getEntityById(clientId));
+    }
+
+    @GetMapping
+    public List<CaseResponse> getAllCases() {
+        return caseService.getAllCases();
     }
 
     @GetMapping("/{caseNumber}")
