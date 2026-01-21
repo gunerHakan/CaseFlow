@@ -10,6 +10,8 @@ Bu proje, modern yazılım geliştirme prensipleri, **Clean Architecture** ve **
 *   **Müvekkil Portalı:** Müvekkillerin kendilerine ait davaları güvenli bir şekilde görüntüleyebilmesi.
 *   **Güvenlik & Yetkilendirme:** Spring Security ile korunan endpoint'ler ve rol tabanlı erişim kontrolleri.
 *   **Performans & Caching:** Sık erişilen veriler (Dava listeleri vb.) için **Redis** tabanlı önbellekleme mekanizması.
+*   **Test Kapsamı:** İş mantığı katmanı (Service Layer) için **JUnit 5** ve **Mockito** ile yazılmış birim testleri (Unit Tests).
+*   **API Dokümantasyonu:** **Swagger UI (OpenAPI)** ile interaktif API dokümantasyonu.
 *   **Veri Bütünlüğü:** Transaction yönetimi (`@Transactional`) ve veri doğrulama (`Jakarta Validation`).
 *   **Modern Java:** DTO'lar için Java `Record` yapılarının kullanımı.
 
@@ -23,7 +25,8 @@ Projede kullanılan temel teknoloji yığını:
 *   **Güvenlik:** Spring Security
 *   **Veritabanı:** PostgreSQL (veya H2 in-memory)
 *   **Caching:** Spring Cache & Redis
-*   **API Dokümantasyonu:** (Planlanan: Swagger/OpenAPI)
+*   **Testing:** JUnit 5, Mockito
+*   **API Dokümantasyonu:** SpringDoc OpenAPI (Swagger)
 *   **Build Tool:** Maven/Gradle
 
 ## 🏗 Mimari Yapı
@@ -35,7 +38,7 @@ Proje, sürdürülebilirlik ve test edilebilirlik için katmanlı mimari (Layere
 3.  **Repository Layer:** Veritabanı ile iletişimi sağlar.
 4.  **DTO & Mapper:** Entity nesnelerini doğrudan dışarı açmak yerine, `Record` tabanlı DTO'lar ve Mapper sınıfları kullanılarak veri transferi güvenli hale getirilmiştir.
 
-## 📦 Kurulum
+## 📦 Kurulum ve Test
 
 Projeyi yerel ortamınızda çalıştırmak için:
 
@@ -47,10 +50,20 @@ Projeyi yerel ortamınızda çalıştırmak için:
     ```bash
     cd caseflow-backend
     ```
-3.  Gerekli bağımlılıkları yükleyin ve projeyi başlatın:
+3.  Uygulamayı başlatın:
     ```bash
     ./mvnw spring-boot:run
     ```
+4.  Testleri çalıştırmak için:
+    ```bash
+    ./mvnw test
+    ```
+
+## 📖 API Dokümantasyonu
+
+Uygulama çalıştıktan sonra aşağıdaki adresten interaktif API dokümantasyonuna erişebilirsiniz:
+
+👉 **Swagger UI:** `http://localhost:8080/swagger-ui.html`
 
 ## 🔍 Örnek API İstekleri
 
