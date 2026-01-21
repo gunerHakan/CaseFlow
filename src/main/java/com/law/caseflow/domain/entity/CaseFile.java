@@ -3,11 +3,15 @@ package com.law.caseflow.domain.entity;
 import com.law.caseflow.domain.enums.CaseStatus;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
 @Table(name = "cases")
-public class CaseFile {
+public class CaseFile implements Serializable {
+
+    // <--- 3. VERSION ID EKLE (Sınıf yapısı değişirse Redis hata vermesin diye kontrol sağlar)
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

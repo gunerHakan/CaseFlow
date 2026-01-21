@@ -1,17 +1,57 @@
-version: "3.9"
+version: '3.8'
 
 services:
-  postgres:
+  # --- Veritabanı Servisi (PostgreSQL) ---
+  db:
     image: postgres:15
-    container_name: caseflow-postgres
+    container_name: caseflow-db
     environment:
       POSTGRES_DB: caseflow
-      POSTGRES_USER: caseflow
-      POSTGRES_PASSWORD: caseflow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  # --- Redis Servisi (Cache) [YENİ EKLENDİ] ---
+  redis:
+    image: redis:alpine
+    container_name: caseflow-redis
+    ports:
+      - "6379:6379"  # İstersen dışarıdan erişim için açık kalsın
+    volumes:
+      - redis_data:/data
+    restart: always
+
+  # --- Bizim Java Backend Servisi ---
+  app:
+    build: .
+    container_name: caseflow-app
+    ports:
+      - "8080:8080"
+      - "5005:5005" # <--- 1. Debug Portunu dışarı açıyoruz
+    depends_on:
+      - db
+      - redis                        # [GÜNCELLENDİ] Artık Redis'i de bekleyecek
+    environment:
+      # --- Database Ayarları ---
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/caseflow
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      # --- Java Ayarları ---
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
+      # --- Redis Ayarları [YENİ EKLENDİ] ---
+      # Spring Boot'a Redis'in "localhost"ta değil, "redis" isimli container'da olduğunu söylüyoruz.
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+    restart: on-failure
 
 volumes:
   postgres_data:
+  redis_data:      # [YENİ EKLENDİ]
