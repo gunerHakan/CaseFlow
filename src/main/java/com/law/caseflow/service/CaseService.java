@@ -8,6 +8,7 @@ import com.law.caseflow.dto.CaseResponse;
 import com.law.caseflow.exception.NotFoundException;
 import com.law.caseflow.repository.CaseRepository;
 import com.law.caseflow.service.mapper.CaseMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Slf4j
 public class CaseService {
 
     private final CaseRepository caseRepository;
@@ -33,6 +35,7 @@ public class CaseService {
         entity.setClient(client);
 
         CaseFile saved = caseRepository.save(entity);
+        log.info("New case created: {}", saved.getCaseNumber());
         return CaseMapper.toResponse(saved);
     }
 
@@ -43,10 +46,11 @@ public class CaseService {
 
     @Cacheable(value = "cases", key = "#caseNumber")
     public CaseFile getEntityByCaseNumber(String caseNumber) {
-        System.out.println("⚠️ DB'den çekiliyor... Case No: " + caseNumber);
+        log.info("⚠️ Fetching from DB (Cache Miss)... Case No: {}", caseNumber);
 
         CaseFile entity = caseRepository.findByCaseNumber(caseNumber);
         if (entity == null) {
+            log.warn("Case not found: {}", caseNumber);
             throw new NotFoundException("Case not found: " + caseNumber);
         }
         return entity;
@@ -71,6 +75,7 @@ public class CaseService {
         caseFile.setDescription(request.description());
 
         CaseFile updatedCase = caseRepository.save(caseFile);
+        log.info("Case updated: {}", caseNumber);
         return CaseMapper.toResponse(updatedCase);
     }
 
@@ -82,5 +87,6 @@ public class CaseService {
     public void delete(String caseNumber) {
         CaseFile caseFile = getEntityByCaseNumber(caseNumber);
         caseRepository.delete(caseFile);
+        log.info("Case deleted: {}", caseNumber);
     }
 }

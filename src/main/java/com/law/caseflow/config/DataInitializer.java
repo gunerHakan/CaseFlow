@@ -4,6 +4,7 @@ import com.law.caseflow.domain.entity.User;
 import com.law.caseflow.domain.enums.Role;
 import com.law.caseflow.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class DataInitializer {
 
     private final PasswordEncoder passwordEncoder;
@@ -19,7 +21,7 @@ public class DataInitializer {
     CommandLineRunner initUsers(UserRepository userRepository) {
         return args -> {
 
-            System.out.println(">>> DataInitializer çalıştı");
+            log.info(">>> DataInitializer çalıştı");
 
             if (userRepository.findByEmail("lawyer@test.com").isEmpty()) {
 
@@ -30,7 +32,7 @@ public class DataInitializer {
 
                 userRepository.save(user);
 
-                System.out.println(">>> Lawyer user oluşturuldu");
+                log.info(">>> Lawyer user oluşturuldu: lawyer@test.com");
             }
         };
     }
