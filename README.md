@@ -1,6 +1,6 @@
 # CaseFlow Backend ⚖️
 
-![Java CI with Maven](https://github.com/kullaniciadi/caseflow-backend/actions/workflows/maven.yml/badge.svg)
+![Java CI with Maven](https://github.com/gunerHakan/CaseFlow/actions/workflows/maven.yml/badge.svg)
 
 CaseFlow, hukuk büroları ve müvekkiller arasındaki dava takip süreçlerini dijitalleştiren, güvenli ve performanslı bir RESTful API projesidir.
 
@@ -50,11 +50,11 @@ Projeyi yerel ortamınızda çalıştırmak için:
 
 1.  Repoyu klonlayın:
     ```bash
-    git clone https://github.com/kullaniciadi/caseflow-backend.git
+    git clone https://github.com/gunerHakan/CaseFlow.git
     ```
 2.  Proje dizinine gidin:
     ```bash
-    cd caseflow-backend
+    cd CaseFlow
     ```
 3.  Uygulamayı başlatın:
     ```bash
