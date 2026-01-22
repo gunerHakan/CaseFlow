@@ -30,13 +30,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // 1. Admin Endpoint'i (En üstte olmalı!)
+                        .requestMatchers("/auth/register-lawyer").hasRole("ADMIN")
+                        
+                        // 2. Herkese Açık Endpoint'ler
                         .requestMatchers(
-                                "/auth/**",
+                                "/auth/login", // Sadece login herkese açık
                                 "/public/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
+                        
+                        // 3. Diğer tüm istekler authentication gerektirir
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

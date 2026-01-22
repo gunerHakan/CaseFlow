@@ -21,18 +21,26 @@ public class DataInitializer {
     CommandLineRunner initUsers(UserRepository userRepository) {
         return args -> {
 
-            log.info(">>> DataInitializer çalıştı");
+            log.info(">>> DataInitializer ran! <<<");
 
+            // 1. Admin User
+            if (userRepository.findByEmail("admin@law.com").isEmpty()) {
+                User admin = new User();
+                admin.setEmail("admin@law.com");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRole(Role.ADMIN);
+                userRepository.save(admin);
+                log.info(">>> Admin user created: admin@law.com");
+            }
+
+            // 2. Lawyer User
             if (userRepository.findByEmail("lawyer@test.com").isEmpty()) {
-
-                User user = new User();
-                user.setEmail("lawyer@test.com");
-                user.setPassword(passwordEncoder.encode("123456"));
-                user.setRole(Role.LAWYER);
-
-                userRepository.save(user);
-
-                log.info(">>> Lawyer user oluşturuldu: lawyer@test.com");
+                User lawyer = new User();
+                lawyer.setEmail("lawyer@test.com");
+                lawyer.setPassword(passwordEncoder.encode("123456"));
+                lawyer.setRole(Role.LAWYER);
+                userRepository.save(lawyer);
+                log.info(">>> Lawyer user created: lawyer@test.com");
             }
         };
     }

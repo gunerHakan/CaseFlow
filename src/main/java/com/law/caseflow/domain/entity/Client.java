@@ -32,6 +32,10 @@ public class Client implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @ManyToOne // Bir avukatın birden fazla müvekkili olabilir
+    @JoinColumn(name = "lawyer_id")
+    private User lawyer;
+
     // GETTERS
     public UUID getId() { return id; }
     public String getFirstName() { return firstName; }
@@ -39,6 +43,7 @@ public class Client implements Serializable {
     public String getEmail() { return email; }
     public List<CaseFile> getCases() { return cases; }
     public User getUser() { return user; }
+    public User getLawyer() { return lawyer; }
 
     // SETTERS
     public void setFirstName(String firstName) { this.firstName = firstName; }
@@ -46,4 +51,5 @@ public class Client implements Serializable {
     public void setEmail(String email) { this.email = email; }
     public void setCases(List<CaseFile> cases) { this.cases = cases; }
     public void setUser(User user) { this.user = user; }
+    public void setLawyer(User lawyer) { this.lawyer = lawyer; }
 }

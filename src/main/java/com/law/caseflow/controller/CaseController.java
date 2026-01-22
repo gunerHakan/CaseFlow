@@ -33,10 +33,21 @@ public class CaseController {
     @PostMapping
     public CaseResponse create(@Valid @RequestBody CaseCreateRequest request,
                                @RequestParam UUID clientId) {
+        // 1. Client'ı bul
         Client client = clientService.getEntityById(clientId);
         if (client == null) {
             throw new NotFoundException("Client not found with id: " + clientId);
         }
+
+        // 2. Güvenlik Kontrolü: Bu client, login olan avukata mı ait?
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentLawyerEmail = authentication.getName();
+
+        // Eğer client'ın bir avukatı varsa ve bu avukatın emaili login olan kişiyle eşleşmiyorsa HATA
+        if (client.getLawyer() != null && !client.getLawyer().getEmail().equals(currentLawyerEmail)) {
+            throw new UnauthorizedException("You are not authorized to create a case for this client.");
+        }
+
         return caseService.create(request, client);
     }
 
@@ -59,15 +70,11 @@ public class CaseController {
 
     @GetMapping("/my-cases")
     public List<CaseResponse> getMyCases() {
-        // 1. Spring Security Context'ten o an login olmuş kişinin emailini al
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        // 2. Email'den Client profilini bul
         Client client = clientService.getClientByEmail(email);
 
-        // 3. Sadece o client'ın davalarını dön
-        // (Bunu CaseService üzerinden yapmak daha şık olurdu ama pratiklik adına burası da çalışır)
         if (client.getCases() == null) {
             return List.of();
         }
@@ -79,13 +86,13 @@ public class CaseController {
     @PutMapping("/{caseNumber}")
     public ResponseEntity<CaseResponse> updateCase(
             @PathVariable String caseNumber,
-            @RequestBody CaseCreateRequest request) { // Güncelleme için aynı DTO'yu kullandım
+            @RequestBody CaseCreateRequest request) {
         return ResponseEntity.ok(caseService.update(caseNumber, request));
     }
 
     @DeleteMapping("/{caseNumber}")
     public ResponseEntity<Void> deleteCase(@PathVariable String caseNumber) {
         caseService.delete(caseNumber);
-        return ResponseEntity.noContent().build(); // 204 No Content döneriz
+        return ResponseEntity.noContent().build();
     }
 }
