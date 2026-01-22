@@ -5,9 +5,11 @@ import com.law.caseflow.domain.entity.Client;
 import com.law.caseflow.domain.enums.CaseStatus;
 import com.law.caseflow.dto.CaseCreateRequest;
 import com.law.caseflow.dto.CaseResponse;
+import com.law.caseflow.event.CaseCreatedEvent;
 import com.law.caseflow.exception.NotFoundException;
 import com.law.caseflow.repository.CaseRepository;
 import com.law.caseflow.service.mapper.CaseMapper;
+import com.law.caseflow.service.producer.CaseProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.cache.annotation.CacheEvict;
@@ -15,6 +17,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,9 +25,11 @@ import java.util.List;
 public class CaseService {
 
     private final CaseRepository caseRepository;
+    private final CaseProducer caseProducer; // EKLENDİ
 
-    public CaseService(CaseRepository caseRepository) {
+    public CaseService(CaseRepository caseRepository, CaseProducer caseProducer) {
         this.caseRepository = caseRepository;
+        this.caseProducer = caseProducer;
     }
 
     @Transactional
@@ -35,7 +40,23 @@ public class CaseService {
         entity.setClient(client);
 
         CaseFile saved = caseRepository.save(entity);
-        log.info("New case created: {}", saved.getCaseNumber());
+        log.info("New case created in DB: {}", saved.getCaseNumber());
+
+        // RabbitMQ'ya asenkron mesaj gönder (Email vb. işlemler için)
+        try {
+            CaseCreatedEvent event = new CaseCreatedEvent(
+                    saved.getCaseNumber(),
+                    client.getEmail(),
+                    saved.getTitle(),
+                    LocalDateTime.now()
+            );
+            caseProducer.sendCaseCreatedEvent(event);
+        } catch (Exception e) {
+            // Mesaj kuyruğa atılamazsa bile ana işlem (DB kaydı) bozulmamalı.
+            // Sadece logluyoruz.
+            log.error("Failed to send RabbitMQ message for case: {}", saved.getCaseNumber(), e);
+        }
+
         return CaseMapper.toResponse(saved);
     }
 

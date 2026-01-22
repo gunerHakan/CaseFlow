@@ -15,14 +15,28 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: always
 
-  # --- Redis Servisi (Cache) [YENİ EKLENDİ] ---
+  # --- Redis Servisi (Cache) ---
   redis:
     image: redis:alpine
     container_name: caseflow-redis
     ports:
-      - "6379:6379"  # İstersen dışarıdan erişim için açık kalsın
+      - "6379:6379"
     volumes:
       - redis_data:/data
+    restart: always
+
+  # --- RabbitMQ Servisi (Message Broker) [YENİ] ---
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: caseflow-rabbitmq
+    ports:
+      - "5672:5672"   # Uygulama bağlantısı için
+      - "15672:15672" # Yönetim paneli için (Tarayıcıdan erişim)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
     restart: always
 
   # --- Bizim Java Backend Servisi ---
@@ -31,10 +45,11 @@ services:
     container_name: caseflow-app
     ports:
       - "8080:8080"
-      - "5005:5005" # <--- 1. Debug Portunu dışarı açıyoruz
+      - "5005:5005"
     depends_on:
       - db
-      - redis                        # [GÜNCELLENDİ] Artık Redis'i de bekleyecek
+      - redis
+      - rabbitmq # [GÜNCELLENDİ] RabbitMQ'yu bekleyecek
     environment:
       # --- Database Ayarları ---
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/caseflow
@@ -45,13 +60,19 @@ services:
       # --- Java Ayarları ---
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 
-      # --- Redis Ayarları [YENİ EKLENDİ] ---
-      # Spring Boot'a Redis'in "localhost"ta değil, "redis" isimli container'da olduğunu söylüyoruz.
+      # --- Redis Ayarları ---
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+
+      # --- RabbitMQ Ayarları [YENİ] ---
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
 
     restart: on-failure
 
 volumes:
   postgres_data:
-  redis_data:      # [YENİ EKLENDİ]
+  redis_data:
+  rabbitmq_data: # [YENİ]

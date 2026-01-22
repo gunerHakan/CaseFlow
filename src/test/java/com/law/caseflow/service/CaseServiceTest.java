@@ -1,10 +1,14 @@
 package com.law.caseflow.service;
 
 import com.law.caseflow.domain.entity.CaseFile;
+import com.law.caseflow.domain.entity.Client;
 import com.law.caseflow.domain.enums.CaseStatus;
+import com.law.caseflow.dto.CaseCreateRequest;
 import com.law.caseflow.dto.CaseResponse;
+import com.law.caseflow.event.CaseCreatedEvent;
 import com.law.caseflow.exception.NotFoundException;
 import com.law.caseflow.repository.CaseRepository;
+import com.law.caseflow.service.producer.CaseProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,58 +29,75 @@ class CaseServiceTest {
     @Mock
     private CaseRepository caseRepository;
 
+    @Mock
+    private CaseProducer caseProducer; // EKLENDİ: RabbitMQ Producer Mock
+
     @InjectMocks
     private CaseService caseService;
 
     private CaseFile sampleCase;
+    private Client sampleClient;
 
     @BeforeEach
     void setUp() {
-        // Her testten önce çalışır ve temiz bir veri hazırlar
+        sampleClient = new Client();
+        sampleClient.setEmail("client@test.com");
+        sampleClient.setFirstName("Ali");
+        sampleClient.setLastName("Veli");
+
         sampleCase = new CaseFile();
         sampleCase.setCaseNumber("2023/101");
         sampleCase.setTitle("Test Davası");
         sampleCase.setDescription("Test Açıklaması");
         sampleCase.setStatus(CaseStatus.OPEN);
+        sampleCase.setClient(sampleClient);
+    }
+
+    @Test
+    void create_ShouldSaveCaseAndSendEvent() {
+        // Arrange
+        CaseCreateRequest request = new CaseCreateRequest("2023/101", "Test Davası", "Açıklama");
+        when(caseRepository.save(any(CaseFile.class))).thenReturn(sampleCase);
+
+        // Act
+        CaseResponse response = caseService.create(request, sampleClient);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals("2023/101", response.caseNumber());
+
+        // 1. Repository save çağrıldı mı?
+        verify(caseRepository, times(1)).save(any(CaseFile.class));
+
+        // 2. RabbitMQ Producer çağrıldı mı? (Event fırlatıldı mı?)
+        verify(caseProducer, times(1)).sendCaseCreatedEvent(any(CaseCreatedEvent.class));
     }
 
     @Test
     void getAllCases_ShouldReturnListOfCaseResponses() {
-        // Arrange (Hazırlık)
         when(caseRepository.findAll()).thenReturn(List.of(sampleCase));
 
-        // Act (Eylem)
         List<CaseResponse> result = caseService.getAllCases();
 
-        // Assert (Kontrol)
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("2023/101", result.get(0).caseNumber());
-        
-        // Repository'nin findAll metodunun tam olarak 1 kere çağrıldığını doğrula
         verify(caseRepository, times(1)).findAll();
     }
 
     @Test
     void getEntityByCaseNumber_WhenCaseExists_ShouldReturnCaseFile() {
-        // Arrange
         when(caseRepository.findByCaseNumber("2023/101")).thenReturn(sampleCase);
 
-        // Act
         CaseFile result = caseService.getEntityByCaseNumber("2023/101");
 
-        // Assert
         assertNotNull(result);
         assertEquals("2023/101", result.getCaseNumber());
     }
 
     @Test
     void getEntityByCaseNumber_WhenCaseDoesNotExist_ShouldThrowNotFoundException() {
-        // Arrange
         when(caseRepository.findByCaseNumber("9999/99")).thenReturn(null);
 
-        // Act & Assert
-        // Olmayan bir numara ile çağrıldığında hata fırlatmalı
         assertThrows(NotFoundException.class, () -> {
             caseService.getEntityByCaseNumber("9999/99");
         });

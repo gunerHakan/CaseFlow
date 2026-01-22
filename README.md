@@ -4,12 +4,13 @@
 
 CaseFlow, hukuk büroları ve müvekkiller arasındaki dava takip süreçlerini dijitalleştiren, güvenli ve performanslı bir RESTful API projesidir.
 
-Bu proje, modern yazılım geliştirme prensipleri, **Clean Architecture**, **CI/CD** süreçleri ve **Spring Boot** ekosistemi kullanılarak geliştirilmiştir.
+Bu proje, modern yazılım geliştirme prensipleri, **Clean Architecture**, **Event-Driven Architecture**, **CI/CD** süreçleri ve **Spring Boot** ekosistemi kullanılarak geliştirilmiştir.
 
 ## 🚀 Özellikler
 
 *   **Dava Yönetimi (Case Management):** Avukatlar için dava oluşturma, güncelleme, listeleme ve silme (CRUD) işlemleri.
 *   **Müvekkil Portalı:** Müvekkillerin kendilerine ait davaları güvenli bir şekilde görüntüleyebilmesi.
+*   **Event-Driven Mimari:** **RabbitMQ** kullanılarak asenkron mesajlaşma ve bildirim (Notification) altyapısı.
 *   **Güvenlik & Yetkilendirme:** Spring Security ile korunan endpoint'ler ve rol tabanlı erişim kontrolleri.
 *   **Performans & Caching:** Sık erişilen veriler (Dava listeleri vb.) için **Redis** tabanlı önbellekleme mekanizması.
 *   **CI/CD Pipeline:** **GitHub Actions** ile her push işleminde otomatik derleme ve test koşumu.
@@ -29,7 +30,8 @@ Projede kullanılan temel teknoloji yığını:
 *   **Güvenlik:** Spring Security
 *   **Veritabanı:** PostgreSQL (veya H2 in-memory)
 *   **Caching:** Spring Cache & Redis
-*   **DevOps:** GitHub Actions (CI/CD), Docker
+*   **Message Broker:** RabbitMQ
+*   **DevOps:** GitHub Actions (CI/CD), Docker & Docker Compose
 *   **Testing:** JUnit 5, Mockito
 *   **Logging:** Slf4j
 *   **API Dokümantasyonu:** SpringDoc OpenAPI (Swagger)
@@ -44,23 +46,33 @@ Proje, sürdürülebilirlik ve test edilebilirlik için katmanlı mimari (Layere
 3.  **Repository Layer:** Veritabanı ile iletişimi sağlar.
 4.  **DTO & Mapper:** Entity nesnelerini doğrudan dışarı açmak yerine, `Record` tabanlı DTO'lar ve Mapper sınıfları kullanılarak veri transferi güvenli hale getirilmiştir.
 
-## 📦 Kurulum ve Test
+## 📦 Kurulum ve Çalıştırma
 
-Projeyi yerel ortamınızda çalıştırmak için:
+Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin.
 
-1.  Repoyu klonlayın:
+### Ön Gereksinimler
+*   Java 17
+*   Docker & Docker Compose
+
+### Adımlar
+
+1.  **Repoyu klonlayın:**
     ```bash
     git clone https://github.com/gunerHakan/CaseFlow.git
-    ```
-2.  Proje dizinine gidin:
-    ```bash
     cd CaseFlow
     ```
-3.  Uygulamayı başlatın:
+
+2.  **Altyapı Servislerini Başlatın (PostgreSQL, Redis, RabbitMQ):**
+    ```bash
+    docker-compose up -d
+    ```
+
+3.  **Uygulamayı Başlatın:**
     ```bash
     ./mvnw spring-boot:run
     ```
-4.  Testleri çalıştırmak için:
+
+4.  **Testleri Çalıştırın:**
     ```bash
     ./mvnw test
     ```
@@ -70,6 +82,12 @@ Projeyi yerel ortamınızda çalıştırmak için:
 Uygulama çalıştıktan sonra aşağıdaki adresten interaktif API dokümantasyonuna erişebilirsiniz:
 
 👉 **Swagger UI:** `http://localhost:8080/swagger-ui.html`
+
+## 🐇 RabbitMQ Yönetim Paneli
+
+Mesaj kuyruklarını izlemek için:
+👉 **URL:** `http://localhost:15672`
+👉 **Kullanıcı/Şifre:** `guest` / `guest`
 
 ## 🔍 Örnek API İstekleri
 
