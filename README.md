@@ -1,112 +1,100 @@
-# CaseFlow Backend ⚖️
+# CaseFlow - Full-Stack Dava Yönetim Sistemi ⚖️
 
 ![Java CI with Maven](https://github.com/gunerHakan/CaseFlow/actions/workflows/maven.yml/badge.svg)
 
-CaseFlow, hukuk büroları ve müvekkiller arasındaki dava takip süreçlerini dijitalleştiren, güvenli ve performanslı bir RESTful API projesidir.
+**CaseFlow**, avukatlar ve müvekkiller için tasarlanmış, modern ve ölçeklenebilir bir dava yönetim platformudur. Bu proje, **Spring Boot** tabanlı güçlü bir backend ile **React Native** tabanlı bir mobil uygulamayı bir araya getiren bir monorepo yapısında geliştirilmiştir.
 
-Bu proje, modern yazılım geliştirme prensipleri, **Clean Architecture**, **Event-Driven Architecture**, **CI/CD** süreçleri ve **Spring Boot** ekosistemi kullanılarak geliştirilmiştir.
+Projenin amacı, karmaşık hukuki süreçleri basitleştirmek, iletişimi merkezileştirmek ve performanstan ödün vermeden güvenli bir dijital deneyim sunmaktır.
 
-## 🚀 Özellikler
+---
 
-*   **Dava Yönetimi (Case Management):** Avukatlar için dava oluşturma, güncelleme, listeleme ve silme (CRUD) işlemleri.
-*   **Müvekkil Portalı:** Müvekkillerin kendilerine ait davaları güvenli bir şekilde görüntüleyebilmesi.
-*   **Event-Driven Mimari:** **RabbitMQ** kullanılarak asenkron mesajlaşma ve bildirim (Notification) altyapısı.
-*   **Güvenlik & Yetkilendirme:** Spring Security ile korunan endpoint'ler ve rol tabanlı erişim kontrolleri.
-*   **Performans & Caching:** Sık erişilen veriler (Dava listeleri vb.) için **Redis** tabanlı önbellekleme mekanizması.
-*   **CI/CD Pipeline:** **GitHub Actions** ile her push işleminde otomatik derleme ve test koşumu.
-*   **Logging:** **Slf4j** ile yapılandırılmış, seviye bazlı (INFO, WARN, ERROR) loglama altyapısı.
-*   **Test Kapsamı:** İş mantığı katmanı (Service Layer) için **JUnit 5** ve **Mockito** ile yazılmış birim testleri (Unit Tests).
-*   **API Dokümantasyonu:** **Swagger UI (OpenAPI)** ile interaktif API dokümantasyonu.
-*   **Veri Bütünlüğü:** Transaction yönetimi (`@Transactional`) ve veri doğrulama (`Jakarta Validation`).
-*   **Modern Java:** DTO'lar için Java `Record` yapılarının kullanımı.
+## ✨ Teknoloji Haritası
 
-## 🛠 Teknolojiler ve Araçlar
+Bu projede kullanılan teknolojiler, modern yazılım geliştirme standartları ve en iyi pratikler göz önünde bulundurularak seçilmiştir.
 
-Projede kullanılan temel teknoloji yığını:
+### **Backend**
 
-*   **Dil:** Java 17
-*   **Framework:** Spring Boot 3.x
-*   **Veri Erişimi:** Spring Data JPA (Hibernate)
-*   **Güvenlik:** Spring Security
-*   **Veritabanı:** PostgreSQL (veya H2 in-memory)
-*   **Caching:** Spring Cache & Redis
-*   **Message Broker:** RabbitMQ
-*   **DevOps:** GitHub Actions (CI/CD), Docker & Docker Compose
-*   **Testing:** JUnit 5, Mockito
-*   **Logging:** Slf4j
-*   **API Dokümantasyonu:** SpringDoc OpenAPI (Swagger)
-*   **Build Tool:** Maven
+| Kategori             | Teknoloji                                                                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Framework**        | <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" />                     |
+| **Dil**              | <img src="https://img.shields.io/badge/Java_17-007396?style=for-the-badge&logo=java&logoColor=white" />                                |
+| **Veritabanı**       | <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />                      |
+| **Güvenlik**         | <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring&logoColor=white" /> **JWT**              |
+| **Asenkron İşlemler**| <img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white" />                           |
+| **Caching**          | <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" />                                 |
+| **API Dokümantasyonu**| <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" />                            |
+| **DevOps & CI/CD**   | <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" /> <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" /> |
+| **Test**             | <img src="https://img.shields.io/badge/JUnit_5-25A162?style=for-the-badge&logo=junit5&logoColor=white" /> <img src="https://img.shields.io/badge/Mockito-4A4A4A?style=for-the-badge&logo=mockito&logoColor=white" /> |
 
-## 🏗 Mimari Yapı
+### **Frontend (Mobile)**
 
-Proje, sürdürülebilirlik ve test edilebilirlik için katmanlı mimari (Layered Architecture) prensiplerine uygun olarak tasarlanmıştır:
+| Kategori      | Teknoloji                                                                                                                              |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Framework** | <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />                          |
+| **Dil**       | <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />                         |
+| **Stil**      | <img src="https://img.shields.io/badge/StyleSheet-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" /> (Native)                    |
+| **Paket Yöneticisi** | <img src="https://img.shields.io/badge/NPM-CB3837?style=for-the-badge&logo=npm&logoColor=white" />                               |
 
-1.  **Controller Layer:** HTTP isteklerini karşılar, validasyon yapar.
-2.  **Service Layer:** İş mantığını (Business Logic) barındırır.
-3.  **Repository Layer:** Veritabanı ile iletişimi sağlar.
-4.  **DTO & Mapper:** Entity nesnelerini doğrudan dışarı açmak yerine, `Record` tabanlı DTO'lar ve Mapper sınıfları kullanılarak veri transferi güvenli hale getirilmiştir.
+---
 
-## 📦 Kurulum ve Çalıştırma
+## 🚀 Temel Özellikler
 
-Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin.
+*   **Katmanlı & Olay Güdümlü Mimari:** Backend, sürdürülebilirlik için **Katmanlı Mimari** ve ölçeklenebilirlik için **Olay Güdümlü (Event-Driven)** prensiplerle tasarlanmıştır.
+*   **Rol Tabanlı Güvenlik:** **Spring Security** ve **JWT** ile her endpoint için rol bazlı (Avukat, Müvekkil) erişim kontrolü.
+*   **Asenkron Bildirimler:** **RabbitMQ** sayesinde, yeni bir dava oluşturulduğunda veya güncellendiğinde ilgili kişilere asenkron olarak e-posta/bildirim gönderimi.
+*   **Yüksek Performanslı Sorgular:** Sık erişilen veriler, **Redis** ile önbelleğe alınarak veritabanı yükü azaltılmış ve API tepki süreleri iyileştirilmiştir.
+*   **Kapsamlı API Dokümantasyonu:** **Swagger (OpenAPI)** ile otomatik olarak oluşturulan, interaktif ve kolay anlaşılır API dokümantasyonu.
+*   **Konteynerize Altyapı:** **Docker & Docker Compose** sayesinde, tüm altyapı servisleri (PostgreSQL, Redis, RabbitMQ) tek bir komutla ayağa kaldırılabilir.
+*   **Sürekli Entegrasyon (CI):** **GitHub Actions** ile her `push` işleminde otomatik olarak testlerin çalıştırılması ve projenin derlenmesi.
 
-### Ön Gereksinimler
-*   Java 17
-*   Docker & Docker Compose
+---
 
-### Adımlar
+## 🖼️ Ekran Görüntüleri
 
-1.  **Repoyu klonlayın:**
-    ```bash
-    git clone https://github.com/gunerHakan/CaseFlow.git
-    cd CaseFlow
-    ```
+*(Buraya mobil uygulamanın giriş ekranı ve ana ekranı gibi 1-2 görsel ekleyebilirsiniz.)*
 
-2.  **Altyapı Servislerini Başlatın (PostgreSQL, Redis, RabbitMQ):**
-    ```bash
-    docker-compose up -d
-    ```
+<p align="center">
+  <img src="/backend/src/main/resources/templates/caseflow_login_screen.png" width="300" alt="Login Screen">
+  &nbsp; &nbsp; &nbsp;
+  <img src="/backend/src/main/resources/templates/lawyer_main_screen.png" width="300" alt="Lawyer Main Screen">
+</p>
 
-3.  **Uygulamayı Başlatın:**
-    ```bash
-    ./mvnw spring-boot:run
-    ```
+---
 
-4.  **Testleri Çalıştırın:**
-    ```bash
-    ./mvnw test
-    ```
+## ⚡ Hızlı Başlangıç
 
-## 📖 API Dokümantasyonu
+Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin.
 
-Uygulama çalıştıktan sonra aşağıdaki adresten interaktif API dokümantasyonuna erişebilirsiniz:
+### **1. Backend'i Çalıştırma**
 
-👉 **Swagger UI:** `http://localhost:8080/swagger-ui.html`
+```bash
+# Proje ana dizinine gidin
+cd backend
 
-## 🐇 RabbitMQ Yönetim Paneli
+# Gerekli servisleri (PostgreSQL, Redis, RabbitMQ) başlatın
+docker-compose up -d
 
-Mesaj kuyruklarını izlemek için:
-👉 **URL:** `http://localhost:15672`
-👉 **Kullanıcı/Şifre:** `guest` / `guest`
+# Spring Boot uygulamasını çalıştırın
+./mvnw spring-boot:run
+```
+> Backend API'sine `http://localhost:8080/swagger-ui.html` adresinden erişebilirsiniz.
 
-## 🔍 Örnek API İstekleri
+### **2. Mobil Uygulamayı Çalıştırma**
 
-**Yeni Dava Oluşturma:**
-```http
-POST /api/cases?clientId={uuid}
-Content-Type: application/json
+*Detaylı ortam kurulumu (Android Studio, SDK, vb.) için `mobile/ANDROID_SETUP.md` dosyasına göz atın.*
 
-{
-  "caseNumber": "2023/101",
-  "title": "Tazminat Davası",
-  "description": "İş kazası kaynaklı tazminat talebi."
-}
+```bash
+# Proje ana dizinine gidin
+cd mobile
+
+# Bağımlılıkları yükleyin
+npm install
+
+# Uygulamayı Android emülatöründe başlatın
+npm run android
 ```
 
-**Dava Sorgulama (Cache Destekli):**
-```http
-GET /api/cases/2023/101?clientId={uuid}
-```
+---
 
 ## 🤝 İletişim
 
