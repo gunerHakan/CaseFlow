@@ -29,6 +29,7 @@ jobs:
         cache: 'maven'
         
     - name: Build with Maven
+      working-directory: ./backend
       run: ./mvnw -B package --file pom.xml
 
     # Opsiyonel: Test sonuçlarını GitHub arayüzünde rapor olarak görmek isterseniz
