@@ -1,9 +1,9 @@
 # Maven
-/target/
+target/
 
 # IDE
-/.idea/
-/*.iml
+.idea/
+*.iml
 
 # OS
 .DS_Store

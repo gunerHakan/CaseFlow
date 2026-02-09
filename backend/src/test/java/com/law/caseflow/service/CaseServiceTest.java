@@ -8,16 +8,15 @@ import com.law.caseflow.dto.CaseResponse;
 import com.law.caseflow.event.CaseCreatedEvent;
 import com.law.caseflow.exception.NotFoundException;
 import com.law.caseflow.repository.CaseRepository;
-import com.law.caseflow.service.producer.CaseProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,7 +29,7 @@ class CaseServiceTest {
     private CaseRepository caseRepository;
 
     @Mock
-    private CaseProducer caseProducer; // EKLENDİ: RabbitMQ Producer Mock
+    private ApplicationEventPublisher eventPublisher; // GÜNCELLENDİ: CaseProducer yerine EventPublisher
 
     @InjectMocks
     private CaseService caseService;
@@ -69,8 +68,8 @@ class CaseServiceTest {
         // 1. Repository save çağrıldı mı?
         verify(caseRepository, times(1)).save(any(CaseFile.class));
 
-        // 2. RabbitMQ Producer çağrıldı mı? (Event fırlatıldı mı?)
-        verify(caseProducer, times(1)).sendCaseCreatedEvent(any(CaseCreatedEvent.class));
+        // 2. Event Publisher çağrıldı mı? (Event fırlatıldı mı?)
+        verify(eventPublisher, times(1)).publishEvent(any(CaseCreatedEvent.class));
     }
 
     @Test
