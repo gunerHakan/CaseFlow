@@ -1,19 +1,63 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
+  ActivityIndicator,
   Image,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Alert,
 } from 'react-native';
 
-const LoginScreen = () => {
+const LoginScreen = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Hata', 'Lütfen e-posta ve şifre giriniz.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await fetch('http://localhost:8080/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: email,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Giriş başarısız.');
+      }
+
+      const data = await response.json();
+
+      if (!data.token) {
+        throw new Error('Sunucudan token alınamadı.');
+      }
+
+      if (onLoginSuccess) {
+        onLoginSuccess(data.token);
+      }
+    } catch (error) {
+      Alert.alert('Giriş Başarısız', error.message || 'Bir hata oluştu.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,8 +103,15 @@ const LoginScreen = () => {
           <Text style={styles.forgotPassword}>Şifremi Unuttum?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Giriş Yap</Text>
+        <TouchableOpacity
+          style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+          onPress={handleLogin}
+          disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.loginButtonText}>Giriş Yap</Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.signupContainer}>
@@ -137,6 +188,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 20,
+  },
+  loginButtonDisabled: {
+    opacity: 0.7,
   },
   loginButtonText: {
     color: '#FFFFFF',

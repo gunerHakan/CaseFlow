@@ -1,44 +1,56 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import React, { useState } from 'react';
+import { StatusBar, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import LoginScreen from './screens/LoginScreen';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [token, setToken] = useState<string | null>(null);
+
+  const handleLoginSuccess = (jwt: string) => {
+    setToken(jwt);
+  };
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <StatusBar barStyle="dark-content" />
+      <View style={styles.container}>
+        {token ? (
+          <View style={styles.mainContainer}>
+            <Text style={styles.welcomeTitle}>CaseFlow</Text>
+            <Text style={styles.welcomeSubtitle}>
+              Başarıyla giriş yaptınız. Bu alan ileride ana ekran ile
+              değiştirilecek.
+            </Text>
+          </View>
+        ) : (
+          <LoginScreen onLoginSuccess={handleLoginSuccess} />
+        )}
+      </View>
     </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  mainContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  welcomeTitle: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#0D47A1',
+    marginBottom: 12,
+  },
+  welcomeSubtitle: {
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
   },
 });
 

@@ -9,8 +9,8 @@ import com.law.caseflow.event.CaseCreatedEvent;
 import com.law.caseflow.exception.NotFoundException;
 import com.law.caseflow.repository.CaseRepository;
 import com.law.caseflow.service.mapper.CaseMapper;
-import com.law.caseflow.service.producer.CaseProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,11 +25,11 @@ import java.util.List;
 public class CaseService {
 
     private final CaseRepository caseRepository;
-    private final CaseProducer caseProducer; // EKLENDİ
+    private final ApplicationEventPublisher eventPublisher;
 
-    public CaseService(CaseRepository caseRepository, CaseProducer caseProducer) {
+    public CaseService(CaseRepository caseRepository, ApplicationEventPublisher eventPublisher) {
         this.caseRepository = caseRepository;
-        this.caseProducer = caseProducer;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -42,20 +42,15 @@ public class CaseService {
         CaseFile saved = caseRepository.save(entity);
         log.info("New case created in DB: {}", saved.getCaseNumber());
 
-        // RabbitMQ'ya asenkron mesaj gönder (Email vb. işlemler için)
-        try {
-            CaseCreatedEvent event = new CaseCreatedEvent(
-                    saved.getCaseNumber(),
-                    client.getEmail(),
-                    saved.getTitle(),
-                    LocalDateTime.now()
-            );
-            caseProducer.sendCaseCreatedEvent(event);
-        } catch (Exception e) {
-            // Mesaj kuyruğa atılamazsa bile ana işlem (DB kaydı) bozulmamalı.
-            // Sadece logluyoruz.
-            log.error("Failed to send RabbitMQ message for case: {}", saved.getCaseNumber(), e);
-        }
+        // Commit sonrası (AFTER_COMMIT) RabbitMQ'ya asenkron mesaj gönderilecek
+        // (listener: com.law.caseflow.event.CaseCreatedEventListener)
+        CaseCreatedEvent event = new CaseCreatedEvent(
+                saved.getCaseNumber(),
+                client.getEmail(),
+                saved.getTitle(),
+                LocalDateTime.now()
+        );
+        eventPublisher.publishEvent(event);
 
         return CaseMapper.toResponse(saved);
     }
