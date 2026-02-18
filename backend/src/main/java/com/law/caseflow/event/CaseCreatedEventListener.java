@@ -19,9 +19,6 @@ public class CaseCreatedEventListener {
         try {
             caseProducer.sendCaseCreatedEvent(event);
         } catch (Exception e) {
-            // Commit olduktan sonra mesaj gönderimi başarısız olabilir.
-            // Bu noktada DB transaction'ı geri alamayız; loglayıp daha sonra retry/outbox gibi
-            // mekanizmalarla güçlendirmek gerekir.
             log.error("Failed to send RabbitMQ message AFTER_COMMIT for case: {}", event.caseNumber(), e);
         }
     }

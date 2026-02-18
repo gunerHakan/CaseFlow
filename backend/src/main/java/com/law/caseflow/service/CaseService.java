@@ -42,8 +42,7 @@ public class CaseService {
         CaseFile saved = caseRepository.save(entity);
         log.info("New case created in DB: {}", saved.getCaseNumber());
 
-        // Commit sonrası (AFTER_COMMIT) RabbitMQ'ya asenkron mesaj gönderilecek
-        // (listener: com.law.caseflow.event.CaseCreatedEventListener)
+        // Domain event publish; RabbitMQ gönderimi AFTER_COMMIT listener ile yapılır
         CaseCreatedEvent event = new CaseCreatedEvent(
                 saved.getCaseNumber(),
                 client.getEmail(),

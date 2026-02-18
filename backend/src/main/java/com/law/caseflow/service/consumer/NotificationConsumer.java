@@ -14,13 +14,11 @@ public class NotificationConsumer {
     public void handleCaseCreatedEvent(CaseCreatedEvent event) {
         log.info("📥 Received message from RabbitMQ: {}", event);
 
-        // Simülasyon: Email gönderme işlemi
         sendEmail(event.clientEmail(), event.caseNumber());
     }
 
     private void sendEmail(String email, String caseNumber) {
         try {
-            // Email atıyormuş gibi 2 saniye bekle (Asenkronluğun faydasını görmek için)
             Thread.sleep(2000);
             log.info("📧 Email sent to {} for case {}", email, caseNumber);
         } catch (InterruptedException e) {

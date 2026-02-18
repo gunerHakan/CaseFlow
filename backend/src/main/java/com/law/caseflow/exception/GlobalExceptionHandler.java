@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
-    // 3. Geçersiz Argüman Hatası (400) - Örn: Email boş olamaz
+    // 3. Geçersiz Argüman Hatası (400)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         ErrorResponse error = new ErrorResponse(
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    // 4. Validation Hataları (400) - Örn: @NotBlank, @Size
+    // 4. Validation Hataları (400)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

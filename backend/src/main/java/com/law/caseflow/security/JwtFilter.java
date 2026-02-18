@@ -6,8 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails; // Eklendi
-import org.springframework.security.core.userdetails.UserDetailsService; // Eklendi
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -38,15 +38,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if (jwtUtil.isTokenValid(token)) {
                 String username = jwtUtil.extractUsername(token);
-
-                // DOĞRUSU BU: User detaylarını ve Rolleri DB'den yükle
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
-                                userDetails.getAuthorities()); // Rolleri yükle!
+                                userDetails.getAuthorities());
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

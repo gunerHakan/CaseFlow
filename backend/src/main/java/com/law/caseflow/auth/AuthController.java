@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor // Constructor injection için Lombok
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository; // EKLENDİ
-    private final PasswordEncoder passwordEncoder; // EKLENDİ
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
